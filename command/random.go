@@ -5,6 +5,7 @@ import (
 	"github.com/corezoid/gitcall-examples/go/entity"
 	"github.com/corezoid/gitcall-examples/go/simulator"
 	"github.com/mitchellh/mapstructure"
+	"strconv"
 	"sync"
 )
 
@@ -12,11 +13,10 @@ func RandomColor(data map[string]interface{}) (map[string]interface{}, error) {
 
 	token := data["token"].(string)
 	layerId := data["layerId"].(string)
-	formId := data["formId"].(string)
 
 	client := simulator.New(token)
 
-	resp, err := client.Get("layer_actors_filters/"+layerId+"/"+formId, simulator.Request{"filter": "id,title,position"})
+	resp, err := client.Get("graph_layers/"+layerId, nil)
 
 	var response entity.LayerActors
 	decoder, _ := mapstructure.NewDecoder(&mapstructure.DecoderConfig{
@@ -26,13 +26,13 @@ func RandomColor(data map[string]interface{}) (map[string]interface{}, error) {
 	})
 	decoder.Decode(resp)
 	var wg sync.WaitGroup
-	for _, v := range response.Data.List {
+	for _, v := range response.Data.Nodes {
 		color := randomcolor.GetRandomColorInHex()
 		wg.Add(1)
-		go func(v entity.Actor, client *simulator.Client, token string, color string, formId string) {
-			client.Put("actors/actor/"+formId+"/"+v.Id, simulator.Request{"color": color}, simulator.Request{"replaceEmpty": "false"})
+		go func(v entity.Actor, client *simulator.Client, token string, color string) {
 			defer wg.Done()
-		}(v, client, token, color, formId)
+			client.Put("actors/actor/"+strconv.Itoa(v.FormId)+"/"+v.Id, simulator.Request{"color": color}, simulator.Request{"replaceEmpty": "false"})
+		}(v, client, token, color)
 
 	}
 	wg.Wait()

@@ -5,14 +5,14 @@ type LayerActors struct {
 }
 
 type LayerActorsList struct {
-	List  []Actor `json:"list"`
-	Total int     `json:"total"`
+	Nodes []Actor `json:"nodes"`
 }
 
 type Actor struct {
 	Id       string        `json:"id"`
 	Title    string        `json:"title"`
 	Position ActorPosition `json:"position"`
+	FormId   int           `json:"formId"`
 }
 
 type ActorPosition struct {
