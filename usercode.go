@@ -3,6 +3,7 @@ package main
 import (
 	"context"
 	"github.com/corezoid/gitcall-examples/go/command"
+	"github.com/corezoid/gitcall-go-runner/gitcall"
 )
 
 func usercode(_ context.Context, data map[string]interface{}) error {
@@ -19,6 +20,6 @@ func usercode(_ context.Context, data map[string]interface{}) error {
 	return nil
 }
 
-//func main() {
-//	gitcall.Handle(usercode)
-//}
+func main() {
+	gitcall.Handle(usercode)
+}
