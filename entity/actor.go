@@ -5,10 +5,12 @@ type LayerActors struct {
 }
 
 type LayerActorsList struct {
-	Nodes []Actor `json:"nodes"`
+	Nodes []Actor         `json:"nodes"`
+	Edges []LinkActorItem `json:"edges"`
 }
 
 type Actor struct {
+	Ref      string        `json:"ref"`
 	Id       string        `json:"id"`
 	Title    string        `json:"title"`
 	Position ActorPosition `json:"position"`
@@ -16,6 +18,6 @@ type Actor struct {
 }
 
 type ActorPosition struct {
-	X float32 `json:"x"`
-	Y float32 `json:"y"`
+	X float64 `json:"x"`
+	Y float64 `json:"y"`
 }

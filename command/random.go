@@ -1,15 +1,16 @@
 package command
 
 import (
+	"fmt"
+	"strconv"
+	"sync"
+
 	"github.com/AvraamMavridis/randomcolor"
 	"github.com/corezoid/gitcall-examples/go/entity"
 	"github.com/corezoid/gitcall-examples/go/simulator"
-	"github.com/mitchellh/mapstructure"
-	"strconv"
-	"sync"
 )
 
-func RandomColor(data map[string]interface{}) (map[string]interface{}, error) {
+func RandomColor(data map[string]interface{}) (string, error) {
 
 	token := data["token"].(string)
 	layerId := data["layerId"].(string)
@@ -18,15 +19,15 @@ func RandomColor(data map[string]interface{}) (map[string]interface{}, error) {
 
 	resp, err := client.Get("graph_layers/"+layerId, nil)
 
-	var response entity.LayerActors
-	decoder, _ := mapstructure.NewDecoder(&mapstructure.DecoderConfig{
-		Metadata: nil,
-		Result:   &response,
-		TagName:  "json",
-	})
-	decoder.Decode(resp)
+	if err != nil {
+		return "", err
+	}
+
+	var graph entity.LayerActors
+	entity.Decode(resp, &graph)
+
 	var wg sync.WaitGroup
-	for _, v := range response.Data.Nodes {
+	for _, v := range graph.Data.Nodes {
 		color := randomcolor.GetRandomColorInHex()
 		wg.Add(1)
 		go func(v entity.Actor, client *simulator.Client, token string, color string) {
@@ -36,5 +37,5 @@ func RandomColor(data map[string]interface{}) (map[string]interface{}, error) {
 
 	}
 	wg.Wait()
-	return resp, err
+	return fmt.Sprintf("[ok] updated color for %d actors", len(graph.Data.Nodes)), nil
 }

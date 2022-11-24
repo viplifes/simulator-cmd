@@ -6,6 +6,7 @@ import (
 	"errors"
 	"fmt"
 	"io"
+	"log"
 	"net/http"
 	"net/url"
 )
@@ -29,105 +30,92 @@ func New(token string) *Client {
 
 func (c Client) Get(apiUrl string, params Request) (Response, error) {
 
-	url := baseURL + apiUrl + "?" + params.urlEncode()
-	req, err := http.NewRequest("GET", url, nil)
+	fullUrl := baseURL + apiUrl + "?" + params.urlEncode()
+	log.Printf("[REQ GET %s]", fullUrl)
+	req, err := http.NewRequest("GET", fullUrl, nil)
 	if err != nil {
-		//Handle Error
-	}
-	req.Header = http.Header{
-		"Authorization": {"Bearer " + c.token},
-	}
-
-	resp, err := c.httpClient.Do(req)
-	if err != nil {
-		//Handle Error
-	}
-
-	defer resp.Body.Close()
-
-	if resp.StatusCode != 200 {
-		return nil, errors.New(fmt.Sprintf("bad response status code, status code is %d", resp.StatusCode))
-	}
-
-	var res Response
-	if err := json.NewDecoder(resp.Body).Decode(&res); err != nil {
 		return nil, err
 	}
-
-	return res, nil
+	return c.request(req)
 }
 
-func (c Client) Post(apiUrl string, data Request, params Request) (Response, error) {
+func (c Client) Post(apiUrl string, data any, params Request) (Response, error) {
 
-	url := baseURL + apiUrl + "?" + params.urlEncode()
-	reqBody := bytes.NewBuffer(data.jsonEncode())
-	req, err := http.NewRequest("POST", url, reqBody)
+	fullUrl := baseURL + apiUrl + "?" + params.urlEncode()
+
+	reqBody, jsonData, err := toBody(data)
 	if err != nil {
-		//Handle Error
+		return nil, errors.New("json_error")
 	}
-	req.Header = http.Header{
-		"Content-Type":  {"application/json"},
-		"Authorization": {"Bearer " + c.token},
-	}
-
-	resp, err := c.httpClient.Do(req)
+	log.Printf("[REQ POST %s] %s", fullUrl, jsonData)
+	req, err := http.NewRequest("POST", fullUrl, reqBody)
 	if err != nil {
-		//Handle Error
-	}
-
-	defer resp.Body.Close()
-
-	if resp.StatusCode != 200 {
-		return nil, errors.New(fmt.Sprintf("bad response status code, status code is %d", resp.StatusCode))
-	}
-
-	var res Response
-	if err := json.NewDecoder(resp.Body).Decode(&res); err != nil {
 		return nil, err
 	}
-
-	return res, nil
+	return c.request(req)
 }
 
-func (c Client) Put(apiUrl string, data Request, params Request) (Response, error) {
+func (c Client) Put(apiUrl string, data any, params Request) (Response, error) {
 
-	url := baseURL + apiUrl + "?" + params.urlEncode()
+	fullUrl := baseURL + apiUrl + "?" + params.urlEncode()
 
-	reqBody := bytes.NewBuffer(data.jsonEncode())
-	req, err := http.NewRequest("PUT", url, reqBody)
+	reqBody, jsonData, err := toBody(data)
 	if err != nil {
-		//Handle Error
+		return nil, errors.New("json_error")
 	}
+	log.Printf("[REQ PUT %s] %s", fullUrl, jsonData)
+	req, err := http.NewRequest("PUT", fullUrl, reqBody)
+	if err != nil {
+		return nil, err
+	}
+	return c.request(req)
+}
+
+func (c Client) Delete(apiUrl string, data any, params Request) (Response, error) {
+
+	fullUrl := baseURL + apiUrl + "?" + params.urlEncode()
+	reqBody, jsonData, err := toBody(data)
+	if err != nil {
+		return nil, errors.New("json_error")
+	}
+	log.Printf("[REQ DELETE %s] %s", fullUrl, jsonData)
+	req, err := http.NewRequest("DELETE", fullUrl, reqBody)
+	if err != nil {
+		return nil, err
+	}
+	return c.request(req)
+}
+
+func (c Client) request(req *http.Request) (Response, error) {
+
 	req.Header.Set("Authorization", "Bearer "+c.token)
 	req.Header.Set("Content-Type", "application/json")
 
 	resp, err := c.httpClient.Do(req)
 	if err != nil {
-		fmt.Println(err)
-		//Handle Error
+		return nil, err
 	}
 
 	defer resp.Body.Close()
 
+	respBody, _ := io.ReadAll(resp.Body)
+	log.Printf("[RES %d] %s", resp.StatusCode, respBody)
 	if resp.StatusCode != 200 {
-		respBody, _ := io.ReadAll(resp.Body)
-		return nil, errors.New(fmt.Sprintf("bad response status code, status code is %d respBody: %s", resp.StatusCode, respBody))
+
+		var errJson Response
+		if err := json.Unmarshal(respBody, &errJson); err != nil {
+			return nil, errors.New(fmt.Sprintf("bad response status code, status code is %d", resp.StatusCode))
+		}
+		errMessage := errJson["message"]
+		return nil, errors.New(fmt.Sprintf("[error %d] %s", resp.StatusCode, errMessage))
 	}
 
 	var res Response
-	if err := json.NewDecoder(resp.Body).Decode(&res); err != nil {
+	if err := json.Unmarshal(respBody, &res); err != nil {
 		return nil, err
 	}
 
 	return res, nil
-}
-
-func (r Request) jsonEncode() []byte {
-	obj, err := json.Marshal(r)
-	if err != nil {
-		return []byte{}
-	}
-	return obj
 }
 
 func (r Request) urlEncode() string {
@@ -141,4 +129,18 @@ func (r Request) urlEncode() string {
 		params.Add(k, v.(string))
 	}
 	return params.Encode()
+}
+
+func toBody(data any) (io.Reader, []byte, error) {
+	var val io.Reader
+	var valJson []byte
+	if data != nil {
+		jsonData, err := json.Marshal(data)
+		if err != nil {
+			return nil, nil, errors.New("json_error")
+		}
+		val = bytes.NewBuffer(jsonData)
+		valJson = jsonData
+	}
+	return val, valJson, nil
 }
