@@ -44,7 +44,7 @@ func makeTimestamp() int64 {
 func tspGA(tm *base.TourManager, gen int) []entity.Actor {
 	p := base.Population{}
 	// Population Size
-	p.InitPopulation(400, *tm)
+	p.InitPopulation(5, *tm)
 
 	// Get initial fittest tour and it's tour distance
 	fmt.Println("Start....")
