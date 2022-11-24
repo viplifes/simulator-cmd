@@ -5,9 +5,9 @@ import (
 	"math/rand"
 	"time"
 
-	"github.com/corezoid/gitcall-examples/go/command/tsp/base"
-	ga "github.com/corezoid/gitcall-examples/go/command/tsp/geneticAlgorithm"
-	"github.com/corezoid/gitcall-examples/go/entity"
+	"github.com/viplifes/simulator-cmd/command/tsp/base"
+	ga "github.com/viplifes/simulator-cmd/command/tsp/geneticAlgorithm"
+	"github.com/viplifes/simulator-cmd/entity"
 )
 
 func TspRun(nodes []entity.Actor, gen int) []entity.Actor {

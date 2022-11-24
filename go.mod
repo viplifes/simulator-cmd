@@ -1,4 +1,4 @@
-module github.com/corezoid/gitcall-examples/go
+module github.com/viplifes/simulator-cmd
 
 go 1.18
 

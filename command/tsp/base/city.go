@@ -5,7 +5,7 @@ import (
 	"math"
 	"math/rand"
 
-	"github.com/corezoid/gitcall-examples/go/entity"
+	"github.com/viplifes/simulator-cmd/entity"
 )
 
 // City : coordinates of city

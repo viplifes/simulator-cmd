@@ -4,7 +4,7 @@ import (
 	"log"
 	"math/rand"
 
-	"github.com/corezoid/gitcall-examples/go/command/tsp/base"
+	"github.com/viplifes/simulator-cmd/command/tsp/base"
 )
 
 // Genetic Algorithm Parameters

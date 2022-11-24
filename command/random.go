@@ -6,8 +6,8 @@ import (
 	"sync"
 
 	"github.com/AvraamMavridis/randomcolor"
-	"github.com/corezoid/gitcall-examples/go/entity"
-	"github.com/corezoid/gitcall-examples/go/simulator"
+	"github.com/viplifes/simulator-cmd/entity"
+	"github.com/viplifes/simulator-cmd/simulator"
 )
 
 func RandomColor(data map[string]interface{}) (string, error) {

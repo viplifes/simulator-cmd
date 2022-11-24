@@ -3,8 +3,8 @@ package main
 import (
 	"context"
 
-	"github.com/corezoid/gitcall-examples/go/command"
 	"github.com/corezoid/gitcall-go-runner/gitcall"
+	"github.com/viplifes/simulator-cmd/command"
 )
 
 func usercode(_ context.Context, data map[string]interface{}) error {

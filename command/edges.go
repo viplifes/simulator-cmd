@@ -4,8 +4,8 @@ import (
 	"fmt"
 	"sync"
 
-	"github.com/corezoid/gitcall-examples/go/entity"
-	"github.com/corezoid/gitcall-examples/go/simulator"
+	"github.com/viplifes/simulator-cmd/entity"
+	"github.com/viplifes/simulator-cmd/simulator"
 )
 
 const EdgeTestName = "CmdTestEdge"
