@@ -18,9 +18,13 @@ func TspRun(nodes []entity.Actor, gen int) []entity.Actor {
 	tm.NewTourManager()
 	// Add cities to TourManager
 	for _, v := range nodes {
-		tm.AddCity(base.GenerateCity(int(v.Position.X), int(v.Position.Y), v))
+		tm.AddCity(base.GenerateCity(v))
 	}
+
+	s := makeTimestamp()
 	result := tspGA(&tm, gen)
+
+	fmt.Printf("TIME_TIME %d\n", makeTimestamp()-s)
 
 	var nodesNew []entity.Actor
 	for i := 0; i < len(result); i++ {
@@ -31,12 +35,16 @@ func TspRun(nodes []entity.Actor, gen int) []entity.Actor {
 
 }
 
+func makeTimestamp() int64 {
+	return time.Now().UnixNano() / int64(time.Millisecond)
+}
+
 // tspGA : Travelling sales person with genetic algorithm
 // input :- TourManager, Number of generations
 func tspGA(tm *base.TourManager, gen int) []entity.Actor {
 	p := base.Population{}
 	// Population Size
-	p.InitPopulation(3, *tm)
+	p.InitPopulation(400, *tm)
 
 	// Get initial fittest tour and it's tour distance
 	fmt.Println("Start....")

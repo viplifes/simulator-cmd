@@ -16,10 +16,10 @@ type City struct {
 }
 
 // GenerateCity : Generate city with user defined coordinates
-func GenerateCity(x int, y int, actor entity.Actor) City {
+func GenerateCity(actor entity.Actor) City {
 	c := City{}
-	c.x = x
-	c.y = y
+	c.x = int(actor.Position.X)
+	c.y = int(actor.Position.Y)
 	c.Actor = actor
 	return c
 }

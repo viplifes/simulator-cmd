@@ -29,8 +29,8 @@ func EdgesAdd(data map[string]interface{}) (string, error) {
 	}
 
 	/// TSP
-	nodesNew := TspRun(nodes, len(nodes)*100)
-
+	//	nodesNew := TspRun(nodes, len(nodes)*100)
+	nodesNew := TspRun(nodes, 1000)
 	var links []entity.LinkActor
 
 	for i := 0; i < len(nodesNew)-1; i++ {
