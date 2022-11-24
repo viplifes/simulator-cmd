@@ -39,7 +39,7 @@ func (c Client) Get(apiUrl string, params Request) (Response, error) {
 	return c.request(req)
 }
 
-func (c Client) Post(apiUrl string, data any, params Request) (Response, error) {
+func (c Client) Post(apiUrl string, data interface{}, params Request) (Response, error) {
 
 	fullUrl := baseURL + apiUrl + "?" + params.urlEncode()
 
@@ -55,7 +55,7 @@ func (c Client) Post(apiUrl string, data any, params Request) (Response, error) 
 	return c.request(req)
 }
 
-func (c Client) Put(apiUrl string, data any, params Request) (Response, error) {
+func (c Client) Put(apiUrl string, data interface{}, params Request) (Response, error) {
 
 	fullUrl := baseURL + apiUrl + "?" + params.urlEncode()
 
@@ -71,7 +71,7 @@ func (c Client) Put(apiUrl string, data any, params Request) (Response, error) {
 	return c.request(req)
 }
 
-func (c Client) Delete(apiUrl string, data any, params Request) (Response, error) {
+func (c Client) Delete(apiUrl string, data interface{}, params Request) (Response, error) {
 
 	fullUrl := baseURL + apiUrl + "?" + params.urlEncode()
 	reqBody, jsonData, err := toBody(data)
@@ -131,7 +131,7 @@ func (r Request) urlEncode() string {
 	return params.Encode()
 }
 
-func toBody(data any) (io.Reader, []byte, error) {
+func toBody(data interface{}) (io.Reader, []byte, error) {
 	var val io.Reader
 	var valJson []byte
 	if data != nil {
