@@ -6,10 +6,9 @@ import (
 	"errors"
 	"fmt"
 	"io"
+	"log"
 	"net/http"
 	"net/url"
-
-	"github.com/rs/zerolog/log"
 )
 
 const baseURL = "https://api.control.events/v/1.0/"
@@ -32,7 +31,7 @@ func New(token string) *Client {
 func (c Client) Get(apiUrl string, params Request) (Response, error) {
 
 	fullUrl := baseURL + apiUrl + "?" + params.urlEncode()
-	log.Debug().Msgf("[REQ GET %s]", fullUrl)
+	log.Printf("[REQ GET %s]", fullUrl)
 	req, err := http.NewRequest("GET", fullUrl, nil)
 	if err != nil {
 		return nil, err
@@ -48,7 +47,7 @@ func (c Client) Post(apiUrl string, data interface{}, params Request) (Response,
 	if err != nil {
 		return nil, errors.New("json_error")
 	}
-	log.Debug().Msgf("[REQ POST %s] %s", fullUrl, jsonData)
+	log.Printf("[REQ POST %s] %s", fullUrl, jsonData)
 	req, err := http.NewRequest("POST", fullUrl, reqBody)
 	if err != nil {
 		return nil, err
@@ -64,7 +63,7 @@ func (c Client) Put(apiUrl string, data interface{}, params Request) (Response, 
 	if err != nil {
 		return nil, errors.New("json_error")
 	}
-	log.Debug().Msgf("[REQ PUT %s] %s", fullUrl, jsonData)
+	log.Printf("[REQ PUT %s] %s", fullUrl, jsonData)
 	req, err := http.NewRequest("PUT", fullUrl, reqBody)
 	if err != nil {
 		return nil, err
@@ -79,7 +78,7 @@ func (c Client) Delete(apiUrl string, data interface{}, params Request) (Respons
 	if err != nil {
 		return nil, errors.New("json_error")
 	}
-	log.Debug().Msgf("[REQ DELETE %s] %s", fullUrl, jsonData)
+	log.Printf("[REQ DELETE %s] %s", fullUrl, jsonData)
 	req, err := http.NewRequest("DELETE", fullUrl, reqBody)
 	if err != nil {
 		return nil, err
@@ -100,7 +99,7 @@ func (c Client) request(req *http.Request) (Response, error) {
 	defer resp.Body.Close()
 
 	respBody, _ := io.ReadAll(resp.Body)
-	log.Debug().Msgf("[RES %d] %s", resp.StatusCode, respBody)
+	log.Printf("[RES %d] %s", resp.StatusCode, respBody)
 	if resp.StatusCode != 200 {
 
 		var errJson Response

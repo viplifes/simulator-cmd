@@ -2,9 +2,10 @@ package main
 
 import (
 	"context"
+	"io"
+	"log"
 
 	"github.com/corezoid/gitcall-go-runner/gitcall"
-	"github.com/rs/zerolog"
 	"github.com/viplifes/simulator-cmd/command"
 )
 
@@ -19,6 +20,6 @@ func usercode(_ context.Context, data map[string]interface{}) error {
 }
 
 func main() {
-	zerolog.SetGlobalLevel(zerolog.ErrorLevel)
+	log.SetOutput(io.Discard)
 	gitcall.Handle(usercode)
 }
