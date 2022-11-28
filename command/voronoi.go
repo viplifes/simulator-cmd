@@ -18,7 +18,7 @@ import (
 	"github.com/viplifes/simulator-cmd/simulator"
 )
 
-const voronoiNodeRef = "myTestVoronoi"
+const voronoiNodeRef = "TestVoronoi"
 
 func VoronoiAdd(data map[string]interface{}) (string, error) {
 
@@ -84,9 +84,7 @@ func VoronoiAdd(data map[string]interface{}) (string, error) {
 	}
 
 	////// DELETE PREV ACTOR
-	go func(formId string, client *simulator.Client) {
-		client.Delete("actors/ref/"+formId+"/"+voronoiNodeRef, nil, nil)
-	}(formId, client)
+	client.Delete("actors/ref/"+formId+"/"+voronoiNodeRef, nil, nil)
 
 	////// UPLOAD FILE
 	var b bytes.Buffer
