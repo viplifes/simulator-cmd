@@ -167,10 +167,6 @@ const TEMPLATE = `<?xml version="1.0" ?>
   <g stroke="red" stroke-width="{{.StrokeWidth}}" fill="none">
     {{range .Edges}}<path d="M{{.Start.X}},{{.Start.Y}} L{{.End.X}},{{.End.Y}}" />
     {{end}}</g>
-  <!-- Vertices -->
-  <g fill="black" >
-    {{range .Vertices}}<circle cx="{{.X}}" cy="{{.Y}}" r="{{$.PointRadius}}" />
-    {{end}}</g>
 </svg>`
 
 type SVG struct {
