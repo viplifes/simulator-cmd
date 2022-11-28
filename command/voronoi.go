@@ -46,7 +46,7 @@ func VoronoiAdd(data map[string]interface{}) (string, error) {
 	for _, v := range graph.Data.Nodes {
 		if v.Ref == voronoiNodeRef {
 			//
-		} else if v.Ref != "command-line" {
+		} else if v.Ref == "command-line" {
 			//
 		} else {
 			nodes = append(nodes, v)
