@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"sync"
 
+	"github.com/viplifes/simulator-cmd/command/tsp"
 	"github.com/viplifes/simulator-cmd/entity"
 	"github.com/viplifes/simulator-cmd/simulator"
 )
@@ -29,7 +30,7 @@ func EdgesAdd(data map[string]interface{}) (string, error) {
 	}
 
 	/// TSP
-	nodesNew := TspRun(nodes, len(nodes)*150)
+	nodesNew := tsp.TspRun(nodes, len(nodes)*150)
 	//	nodesNew := TspRun(nodes, 1000)
 	var links []entity.LinkActor
 

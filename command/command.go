@@ -13,6 +13,10 @@ func Run(cmd string, data map[string]interface{}) (string, error) {
 		return EdgesAdd(data)
 	} else if words[0] == "edges" && words[1] == "remove" {
 		return EdgesRemove(data)
+	} else if words[0] == "voronoi" && words[1] == "add" {
+		return VoronoiAdd(data)
+	} else if words[0] == "voronoi" && words[1] == "remove" {
+		return VoronoiRemove(data)
 	} else {
 		return "", errors.New("[error] command '" + cmd + "' not found")
 	}

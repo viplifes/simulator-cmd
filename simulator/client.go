@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"io"
 	"log"
+	"mime/multipart"
 	"net/http"
 	"net/url"
 )
@@ -36,7 +37,7 @@ func (c Client) Get(apiUrl string, params Request) (Response, error) {
 	if err != nil {
 		return nil, err
 	}
-	return c.request(req)
+	return c.request(req, "")
 }
 
 func (c Client) Post(apiUrl string, data interface{}, params Request) (Response, error) {
@@ -52,7 +53,7 @@ func (c Client) Post(apiUrl string, data interface{}, params Request) (Response,
 	if err != nil {
 		return nil, err
 	}
-	return c.request(req)
+	return c.request(req, "")
 }
 
 func (c Client) Put(apiUrl string, data interface{}, params Request) (Response, error) {
@@ -68,7 +69,7 @@ func (c Client) Put(apiUrl string, data interface{}, params Request) (Response, 
 	if err != nil {
 		return nil, err
 	}
-	return c.request(req)
+	return c.request(req, "")
 }
 
 func (c Client) Delete(apiUrl string, data interface{}, params Request) (Response, error) {
@@ -83,13 +84,34 @@ func (c Client) Delete(apiUrl string, data interface{}, params Request) (Respons
 	if err != nil {
 		return nil, err
 	}
-	return c.request(req)
+	return c.request(req, "")
 }
 
-func (c Client) request(req *http.Request) (Response, error) {
+func (c Client) Upload(apiUrl string, data []byte, params Request) (Response, error) {
+
+	fullUrl := baseURL + apiUrl + "?" + params.urlEncode()
+
+	body := &bytes.Buffer{}
+	writer := multipart.NewWriter(body)
+	part, _ := writer.CreateFormFile("file", "file.png")
+	io.Copy(part, bytes.NewBuffer(data))
+	writer.Close()
+
+	req, err := http.NewRequest("POST", fullUrl, body)
+	if err != nil {
+		return nil, err
+	}
+	return c.request(req, writer.FormDataContentType())
+}
+
+func (c Client) request(req *http.Request, contentType string) (Response, error) {
 
 	req.Header.Set("Authorization", "Bearer "+c.token)
-	req.Header.Set("Content-Type", "application/json")
+	if contentType != "" {
+		req.Header.Set("Content-Type", contentType)
+	} else {
+		req.Header.Set("Content-Type", "application/json")
+	}
 
 	resp, err := c.httpClient.Do(req)
 	if err != nil {
