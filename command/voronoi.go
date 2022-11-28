@@ -46,6 +46,8 @@ func VoronoiAdd(data map[string]interface{}) (string, error) {
 	for _, v := range graph.Data.Nodes {
 		if v.Ref == voronoiNodeRef {
 			//
+		} else if v.Ref != "command-line" {
+			//
 		} else {
 			nodes = append(nodes, v)
 		}
@@ -81,10 +83,10 @@ func VoronoiAdd(data map[string]interface{}) (string, error) {
 		os.Exit(1)
 	}
 
-	// ioutil.WriteFile("/Users/Downloads/test.svg", buf.Bytes(), 0644)
-
 	////// DELETE PREV ACTOR
-	client.Delete("actors/ref/"+formId+"/"+voronoiNodeRef, nil, nil)
+	go func(formId string, client *simulator.Client) {
+		client.Delete("actors/ref/"+formId+"/"+voronoiNodeRef, nil, nil)
+	}(formId, client)
 
 	////// UPLOAD FILE
 	var b bytes.Buffer
